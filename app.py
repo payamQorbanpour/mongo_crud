@@ -3,12 +3,10 @@ from flask_restful import Resource, Api, abort
 from marshmallow import fields, Schema, ValidationError
 from pymongo import MongoClient
 from bson import ObjectId
+from models import *
 
 app = Flask(__name__)
 api = Api(app)
-
-# Defining database and collection named stuff
-table_stuff = MongoClient().crud_db.stuff
 
 
 def does_exist(stuff_id):
@@ -22,13 +20,6 @@ def price_limitaion(price):
         raise ValidationError('Price couldn\'t be negative!')
     if price > 1000:
         abort(400, message="The price is too high!")
-
-
-class Input(Schema):
-    body = fields.Str()
-    title = fields.String()
-    price = fields.Float(validate=price_limitaion)
-    email = fields.Email()
 
 
 class Stuff(Resource):
