@@ -61,14 +61,14 @@ class CRUD(Resource):
 
 
 # READ totally
-class AllDataRetrive(Resource):
+class AllDataRetrieve(Resource):
     def get(self):
         cursor = table.find({}, {"_id": 0})
         return [result for result in cursor]
 
 
 api.add_resource(CRUD, '/<string:data_id>')
-api.add_resource(AllDataRetrive, '/')
+api.add_resource(AllDataRetrieve, '/')
 
 if __name__ == '__main__':
     app.run(debug=True)
