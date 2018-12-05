@@ -9,9 +9,9 @@ app = Flask(__name__)
 api = Api(app)
 
 
-def does_exist(stuff_id):
-    this_stuff = table_stuff.find_one({"title": stuff_id})
-    if not this_stuff:
+def does_exist(data_id):
+    title = table.find_one({"title": data_id})
+    if not title:
         abort(404, message="doesn't exist.")
 
 
@@ -22,53 +22,53 @@ def price_limitaion(price):
         abort(400, message="The price is too high!")
 
 
-class Stuff(Resource):
+class CRUD(Resource):
     # READ individually
-    def get(self, stuff_id):
-        does_exist(stuff_id)
-        this_stuff = table_stuff.find_one({"title": stuff_id}, {"_id": 0})
-        return this_stuff
+    def get(self, data_id):
+        does_exist(data_id)
+        data = table.find_one({"title": data_id}, {"_id": 0})
+        return data
 
     # CREATE
-    def post(self, stuff_id):
+    def post(self, data_id):
         schema = Input()
-        stuff = request.get_json()
-        result = schema.load(stuff)
+        data = request.get_json()
+        result = schema.load(data)
         print (result)
         if not result.errors:
-            table_stuff.insert_one(result.data)
+            table.insert_one(result.data)
             return str(result.data), 201
         else:
             return result.errors, 400
 
     # UPDATE
-    def put(self, stuff_id):
-        does_exist(stuff_id)
+    def put(self, data_id):
+        does_exist(data_id)
         schema = Input()
-        stuff = request.get_json()
-        result = schema.load(stuff)
+        data = request.get_json()
+        result = schema.load(data)
         if not result.errors:
-            table_stuff.update_one({"title": stuff_id}, {"$set": stuff})
+            table.update_one({"title": data_id}, {"$set": data})
             return result, 201
         else:
             return result.errors, 400
 
     # DELETE
-    def delete(self, stuff_id):
-        does_exist(stuff_id)
-        table_stuff.delete_one({"title": stuff_id})
+    def delete(self, data_id):
+        does_exist(data_id)
+        table.delete_one({"title": data_id})
         return 'Data deleted!', 204
 
 
 # READ totally
-class AllStuff(Resource):
+class AllDataRetrive(Resource):
     def get(self):
-        cursor = table_stuff.find({}, {"_id": 0})
+        cursor = table.find({}, {"_id": 0})
         return [result for result in cursor]
 
 
-api.add_resource(Stuff, '/<string:stuff_id>')
-api.add_resource(AllStuff, '/')
+api.add_resource(CRUD, '/<string:data_id>')
+api.add_resource(AllDataRetrive, '/')
 
 if __name__ == '__main__':
     app.run(debug=True)

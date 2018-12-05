@@ -4,7 +4,7 @@ from app import price_limitaion
 
 
 # Defining database and collection named stuff
-table_stuff = MongoClient().crud_db.stuff
+table = MongoClient().crud_db.stuff
 
 
 class Input(Schema):
