@@ -1,12 +1,15 @@
 from flask import Flask, request
 from flask_restful import Resource, Api, abort
-from marshmallow import fields, Schema, ValidationError
+from marshmallow import ValidationError
 from pymongo import MongoClient
-from bson import ObjectId
 from models import *
 
 app = Flask(__name__)
 api = Api(app)
+
+
+# Defining database and collection named stuff
+table = MongoClient().crud_db.stuff
 
 
 def does_exist(data_id):
@@ -31,9 +34,8 @@ class CRUD(Resource):
 
     # CREATE
     def post(self, data_id):
-        schema = Input()
         data = request.get_json()
-        result = schema.load(data)
+        result = Data().load(data)
         print (result)
         if not result.errors:
             table.insert_one(result.data)
@@ -44,9 +46,8 @@ class CRUD(Resource):
     # UPDATE
     def put(self, data_id):
         does_exist(data_id)
-        schema = Input()
         data = request.get_json()
-        result = schema.load(data)
+        result = Data().load(data)
         if not result.errors:
             table.update_one({"title": data_id}, {"$set": data})
             return result, 201
