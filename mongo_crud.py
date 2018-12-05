@@ -72,11 +72,8 @@ class Stuff(Resource):
 # READ totally
 class AllStuff(Resource):
     def get(self):
-        stuff_bucket = []
         cursor = table_stuff.find({}, {"_id": 0})
-        for result in cursor:
-            stuff_bucket.append(result)
-        return stuff_bucket
+        return [result for result in cursor]
 
 
 api.add_resource(Stuff, '/<string:stuff_id>')
